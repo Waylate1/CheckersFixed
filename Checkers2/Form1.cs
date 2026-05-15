@@ -10,7 +10,7 @@ namespace Checkers2
     {
         int n = 8;
         PictureBox[,] P;
-        string turn = "r";
+        string turn = "red";
         int blueCount = 12, redCount = 12;
 
         PictureBox selectedBox = null;
@@ -44,8 +44,8 @@ namespace Checkers2
                     var info = (Grid)P[i, j].Tag;
                     if (P[i, j].BackColor == Color.Black)
                     {
-                        if (i < 3) { P[i, j].Image = Properties.Resources.Red; info.Piece = "r"; }
-                        else if (i > 4) { P[i, j].Image = Properties.Resources.Blue; info.Piece = "b"; }
+                        if (i < 3) { P[i, j].Image = Properties.Resources.Red; info.Piece = "red"; }
+                        else if (i > 4) { P[i, j].Image = Properties.Resources.Blue; info.Piece = "blue"; }
                     }
                     P[i, j].Click += Square_Click;
                     this.Controls.Add(P[i, j]);
@@ -66,17 +66,17 @@ namespace Checkers2
 
             if (info.Piece == turn)
             {
-                ClearHints();
+                ClearMoves();
                 selectedBox = clicked;
                 ShowValidMoves(info.X, info.Y, info.Piece, info.IsKing);
             }
         }
-
+        //Shows where you can move a piece
         private void ShowValidMoves(int x, int y, string pColor, bool isKing)
         {
             List<int> directions = new List<int>();
             if (isKing) { directions.Add(1); directions.Add(-1); }
-            else { directions.Add(pColor == "r" ? 1 : -1); }
+            else { directions.Add(pColor == "red" ? 1 : -1); }
 
             int[] dy = { -1, 1 };
 
@@ -123,10 +123,10 @@ namespace Checkers2
                 vicInfo.Piece = "";
                 P[vic.X, vic.Y].Image = null;
 
-                if (pColor == "r") blueCount--; else redCount--;
+                if (pColor == "red") blueCount--; else redCount--;
             }
 
-            ClearHints();
+            ClearMoves();
             from.Image = null;
             fromInfo.Piece = "";
             fromInfo.IsKing = false;
@@ -134,7 +134,7 @@ namespace Checkers2
             toInfo.Piece = pColor;
             toInfo.IsKing = pWasKing;
 
-            if ((pColor == "r" && toInfo.X == 7) || (pColor == "b" && toInfo.X == 0))
+            if ((pColor == "red" && toInfo.X == 7) || (pColor == "blue" && toInfo.X == 0))
             {
                 toInfo.IsKing = true;
                 to.BackColor = Color.Gold;
@@ -144,20 +144,20 @@ namespace Checkers2
 
             CheckWin();
 
-            turn = (turn == "r") ? "b" : "r";
-            if (turn == "b") RunInstantAI();
+            turn = (turn == "red") ? "blue" : "red";
+            if (turn == "blue") RunAI();
         }
-
-        private void RunInstantAI()
+        // simple ai that is oddly challengeing 
+        private void RunAI()
         {
             var pieces = new List<PictureBox>();
-            foreach (var pb in P) if (((Grid)pb.Tag).Piece == "b") pieces.Add(pb);
+            foreach (var pb in P) if (((Grid)pb.Tag).Piece == "blue") pieces.Add(pb);
 
             foreach (var pb in pieces.OrderBy(x => Guid.NewGuid()))
             {
                 var info = (Grid)pb.Tag;
                 selectedBox = pb;
-                ShowValidMoves(info.X, info.Y, "b", info.IsKing);
+                ShowValidMoves(info.X, info.Y, "blue", info.IsKing);
                 if (currentMoves.Count > 0)
                 {
                     Point move = currentMoves.OrderByDescending(m => jumpCaptures.ContainsKey(m)).First();
@@ -166,14 +166,14 @@ namespace Checkers2
                 }
             }
         }
-
+        //Marks where you can move
         private void MarkMove(int x, int y)
         {
             P[x, y].Image = Properties.Resources.Move;
             currentMoves.Add(new Point(x, y));
         }
-
-        private void ClearHints()
+        //Clears the mark
+        private void ClearMoves()
         {
             foreach (var pt in currentMoves)
                 if (((Grid)P[pt.X, pt.Y].Tag).Piece == "") P[pt.X, pt.Y].Image = null;
@@ -181,7 +181,7 @@ namespace Checkers2
             currentMoves.Clear();
             jumpCaptures.Clear();
         }
-
+        //Checks to make sure you are inside the map
         private bool IsInside(int x, int y) => x >= 0 && x < n && y >= 0 && y < n;
 
         private void CheckWin()
