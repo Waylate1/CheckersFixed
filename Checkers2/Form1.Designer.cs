@@ -28,7 +28,6 @@
         /// </summary>
         private void InitializeComponent()
         {
-            G = new Panel();
             pictureBox1 = new PictureBox();
             pictureBox2 = new PictureBox();
             labelp1 = new Label();
@@ -36,14 +35,6 @@
             ((System.ComponentModel.ISupportInitialize)pictureBox1).BeginInit();
             ((System.ComponentModel.ISupportInitialize)pictureBox2).BeginInit();
             SuspendLayout();
-            // 
-            // G
-            // 
-            G.BackColor = Color.Gray;
-            G.Location = new Point(10, 10);
-            G.Name = "G";
-            G.Size = new Size(484, 484);
-            G.TabIndex = 0;
             // 
             // pictureBox1
             // 
@@ -95,12 +86,10 @@
             Controls.Add(labelp1);
             Controls.Add(pictureBox2);
             Controls.Add(pictureBox1);
-            Controls.Add(G);
             FormBorderStyle = FormBorderStyle.FixedSingle;
             MinimizeBox = false;
             Name = "Form1";
             Text = "Checkers";
-            Load += Form1_Load;
             ((System.ComponentModel.ISupportInitialize)pictureBox1).EndInit();
             ((System.ComponentModel.ISupportInitialize)pictureBox2).EndInit();
             ResumeLayout(false);
@@ -108,8 +97,6 @@
         }
 
         #endregion
-
-        private Panel G;
         private PictureBox pictureBox1;
         private PictureBox pictureBox2;
         private Label labelp1;
